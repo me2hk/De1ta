@@ -1,0 +1,31 @@
+<!-- 武器配置文件示例 -->
+<!-- Vertical:   垂直偏移像素（正值向下，负值向上） -->
+<!-- Horizontal: 水平偏移像素（正值向右，负值向左） -->
+<!-- Duration:   阶段持续时间（压枪时长，单位毫秒） -->
+<!-- LastWeapon：武器配置索引（武器顺序，0为第一个）-->
+
+<WeaponConfig>
+
+    <lastWeapon>0</lastWeapon>
+    
+    <Weapon Name="AKM">
+    <Stage Vertical="13" Horizontal="0" Duration="500"/>
+    <Stage Vertical="9" Horizontal="-3" Duration="9500"/>
+    </Weapon>
+
+    <Weapon Name="SMG45">
+    <Stage Vertical="10" Horizontal="0" Duration="500"/>
+    <Stage Vertical="9" Horizontal="-1" Duration="9500"/>
+    </Weapon>
+    
+    <Weapon Name="SCARH">
+    <Stage Vertical="13" Horizontal="0" Duration="500"/>
+    <Stage Vertical="11" Horizontal="0" Duration="9500"/>
+    </Weapon>
+
+    <Weapon Name="PTR32">
+    <Stage Vertical="13" Horizontal="0" Duration="500"/>
+    <Stage Vertical="9" Horizontal="2" Duration="9500"/>
+    </Weapon>
+
+</WeaponConfig>
