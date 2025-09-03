@@ -1,0 +1,18 @@
+<!-- 武器配置文件示例 -->
+<!-- Vertical:   垂直偏移像素（正值向下，负值向上） -->
+<!-- Horizontal: 水平偏移像素（正值向右，负值向左） -->
+<!-- Duration:   阶段持续时间 (每阶段压枪时长控制) -->
+
+<WeaponConfig>
+
+    <Weapon Name="PTR32">
+    <Stage Vertical="11" Horizontal="0" Duration="400"/> 
+    <Stage Vertical="8" Horizontal="2" Duration="5000"/>
+    </Weapon>
+
+    <Weapon Name="AKM">
+    <Stage Vertical="8" Horizontal="0" Duration="500"/> 
+    <Stage Vertical="8" Horizontal="-2" Duration="5000"/>
+    </Weapon>
+    
+</WeaponConfig>
