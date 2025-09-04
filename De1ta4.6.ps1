@@ -1,14 +1,14 @@
-# ¹ÜÀíÔ±È¨ÏŞ¼ì²é(È·±£ÒÔ¹ÜÀíÔ±Éí·İÔËĞĞ)
+# ç®¡ç†å‘˜æƒé™æ£€æŸ¥(ç¡®ä¿ä»¥ç®¡ç†å‘˜èº«ä»½è¿è¡Œ)
 if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-    # ÖØĞÂÆô¶¯½Å±¾²¢ÒÔ¹ÜÀíÔ±È¨ÏŞÔËĞĞ
+    # é‡æ–°å¯åŠ¨è„šæœ¬å¹¶ä»¥ç®¡ç†å‘˜æƒé™è¿è¡Œ
     Start-Process powershell "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Wait -Verb RunAs
     exit 
 }
 
-# ³õÊ¼»¯È«¾Ö±äÁ¿
+# åˆå§‹åŒ–å…¨å±€å˜é‡
 $global:isInputControlActive = $false
 
-# ¼ÓÔØ±ØÒªµÄC#³ÌĞò¼¯
+# åŠ è½½å¿…è¦çš„C#ç¨‹åºé›†
 Add-Type -ReferencedAssemblies @("System.Windows.Forms", "System.Drawing") -TypeDefinition @'
 using System;
 using System.Runtime.InteropServices;
@@ -18,10 +18,10 @@ using System.Threading;
 
 namespace WindowControl 
 {
-    // ´°¿Ú¿ØÖÆAPIÀà
+    // çª—å£æ§åˆ¶APIç±»
     public static class WindowAPI 
     {
-        // ´°¿Ú¿ØÖÆAPI
+        // çª—å£æ§åˆ¶API
         [DllImport("user32.dll")] public static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
         [DllImport("kernel32.dll")] public static extern IntPtr GetConsoleWindow();
         [DllImport("user32.dll")] public static extern IntPtr GetDC(IntPtr hWnd);
@@ -29,7 +29,7 @@ namespace WindowControl
         [DllImport("user32.dll")] public static extern int ReleaseDC(IntPtr hWnd, IntPtr hDC);
         [DllImport("user32.dll")] public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
-        // ´°¿ÚËø¶¨API
+        // çª—å£é”å®šAPI
         [DllImport("user32.dll")] private static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
         [DllImport("user32.dll")] private static extern bool DeleteMenu(IntPtr hMenu, uint uPosition, uint uFlags);
         [DllImport("kernel32.dll")] private static extern IntPtr GetStdHandle(int nStdHandle);
@@ -38,56 +38,56 @@ namespace WindowControl
         [DllImport("user32.dll", SetLastError = true)] private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
         [DllImport("user32.dll", SetLastError = true)] private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
 
-        // ¹â±ê¿ØÖÆ API
+        // å…‰æ ‡æ§åˆ¶ API
         [DllImport("kernel32.dll")] private static extern bool GetConsoleCursorInfo(IntPtr hConsoleOutput, out CONSOLE_CURSOR_INFO lpConsoleCursorInfo);
         [DllImport("kernel32.dll")] private static extern bool SetConsoleCursorInfo(IntPtr hConsoleOutput, ref CONSOLE_CURSOR_INFO lpConsoleCursorInfo);
         
-        // ¹â±êĞÅÏ¢½á¹¹Ìå
+        // å…‰æ ‡ä¿¡æ¯ç»“æ„ä½“
         [StructLayout(LayoutKind.Sequential)]
         public struct CONSOLE_CURSOR_INFO
         {
-            public int dwSize;         // ¹â±ê´óĞ¡(1-100)
-            public bool bVisible;      // ¹â±ê¿É¼ûĞÔ
+            public int dwSize;           // å…‰æ ‡å¤§å°(1-100)
+            public bool bVisible;        // å…‰æ ‡å¯è§æ€§
         }
 
-        // ´°¿Ú¿ØÖÆ³£Á¿¶¨Òå
+        // çª—å£æ§åˆ¶å¸¸é‡å®šä¹‰
         public const int
-            WM_SYSCOMMAND = 0x0112,    // ÏµÍ³ÃüÁîÏûÏ¢
-            WM_GETMINMAXINFO = 0x0024, // ´°¿Ú³ß´çÏŞÖÆÏûÏ¢
-            GWL_STYLE = -16,           // ´°¿ÚÑùÊ½Ë÷Òı
-            WS_THICKFRAME = 0x00040000,// ¿Éµ÷Õû±ß¿òÑùÊ½
-            SC_MAXIMIZE = 0xF030,      // ×î´ó»¯ÃüÁî
-            SW_SHOWMINIMIZED = 2;      // ×îĞ¡»¯ÏÔÊ¾ÃüÁî
+            WM_SYSCOMMAND = 0x0112,      // ç³»ç»Ÿå‘½ä»¤æ¶ˆæ¯
+            WM_GETMINMAXINFO = 0x0024,   // çª—å£å°ºå¯¸é™åˆ¶æ¶ˆæ¯
+            GWL_STYLE = -16,             // çª—å£æ ·å¼ç´¢å¼•
+            WS_THICKFRAME = 0x00040000,  // å¯è°ƒæ•´è¾¹æ¡†æ ·å¼
+            SC_MAXIMIZE = 0xF030,        // æœ€å¤§åŒ–å‘½ä»¤
+            SW_SHOWMINIMIZED = 2;        // æœ€å°åŒ–æ˜¾ç¤ºå‘½ä»¤
 
         public const uint
-            ENABLE_QUICK_EDIT_MODE = 0x0040;  // ¿ìËÙ±à¼­Ä£Ê½±êÖ¾
+            ENABLE_QUICK_EDIT_MODE = 0x0040;  // å¿«é€Ÿç¼–è¾‘æ¨¡å¼æ ‡å¿—
 
         private const int 
-            STD_INPUT_HANDLE = -10,    // ±ê×¼ÊäÈë¾ä±ú±êÊ¶
-            STD_OUTPUT_HANDLE = -11;   // ±ê×¼Êä³ö¾ä±ú±êÊ¶
+            STD_INPUT_HANDLE = -10,      // æ ‡å‡†è¾“å…¥å¥æŸ„æ ‡è¯†
+            STD_OUTPUT_HANDLE = -11;     // æ ‡å‡†è¾“å‡ºå¥æŸ„æ ‡è¯†
 
-        // Ëø¶¨¿ØÖÆÌ¨´°¿Ú
+        // é”å®šæ§åˆ¶å°çª—å£
         public static void LockWindow()
         {
             IntPtr hWnd = GetConsoleWindow();
             if (hWnd == IntPtr.Zero) return;
 
-            // 1.ÒÆ³ı´°¿Ú±ß¿òÑùÊ½ - ½ûÖ¹µ÷Õû´°¿Ú´óĞ¡
+            // 1.ç§»é™¤çª—å£è¾¹æ¡†æ ·å¼ - ç¦æ­¢è°ƒæ•´çª—å£å¤§å°
             int style = GetWindowLong(hWnd, GWL_STYLE);
             SetWindowLong(hWnd, GWL_STYLE, style & ~WS_THICKFRAME);
 
-            // 2.½ûÓÃÏµÍ³²Ëµ¥°´Å¥ - ½ûÖ¹×î´ó»¯°´Å¥
+            // 2.ç¦ç”¨ç³»ç»Ÿèœå•æŒ‰é’® - ç¦æ­¢æœ€å¤§åŒ–æŒ‰é’®
             IntPtr hMenu = GetSystemMenu(hWnd, false);
             DeleteMenu(hMenu, SC_MAXIMIZE, 0x0000);
 
-            // 3.Ëø¶¨´°¿Ú³ß´ç - ·ÀÖ¹×î´ó»¯
+            // 3.é”å®šçª—å£å°ºå¯¸ - é˜²æ­¢æœ€å¤§åŒ–
             Application.AddMessageFilter(new MessageFilter(hWnd));
 
-            // 4.½ûÓÃ¿ìËÙ±à¼­Ä£Ê½ - ·ÀÖ¹Êó±êÑ¡Ôñ¸´ÖÆ
+            // 4.ç¦ç”¨å¿«é€Ÿç¼–è¾‘æ¨¡å¼ - é˜²æ­¢é¼ æ ‡é€‰æ‹©å¤åˆ¶
             DisableQuickEditMode();
         }
 
-        // ½ûÓÃ¿ØÖÆÌ¨¿ìËÙ±à¼­Ä£Ê½
+        // ç¦ç”¨æ§åˆ¶å°å¿«é€Ÿç¼–è¾‘æ¨¡å¼
         private static void DisableQuickEditMode()
         {
             IntPtr hStdIn = GetStdHandle(STD_INPUT_HANDLE);
@@ -99,7 +99,7 @@ namespace WindowControl
             }
         }
 
-        // ×îĞ¡»¯¿ØÖÆÌ¨´°¿Ú
+        // æœ€å°åŒ–æ§åˆ¶å°çª—å£
         public static void MinimizeWindow()
         {
             IntPtr hWnd = GetConsoleWindow();
@@ -109,19 +109,19 @@ namespace WindowControl
             }
         }
         
-        // Òş²Ø¿ØÖÆÌ¨¹â±ê
+        // éšè—æ§åˆ¶å°å…‰æ ‡
         public static void HideConsoleCursor()
         {
             IntPtr hOutput = GetStdHandle(STD_OUTPUT_HANDLE);
             CONSOLE_CURSOR_INFO cursorInfo;
             if (GetConsoleCursorInfo(hOutput, out cursorInfo))
             {
-                cursorInfo.bVisible = false; // ÉèÖÃ¹â±ê²»¿É¼û
+                cursorInfo.bVisible = false; // è®¾ç½®å…‰æ ‡ä¸å¯è§
                 SetConsoleCursorInfo(hOutput, ref cursorInfo);
             }
         }
 
-        // ´°¿ÚÏûÏ¢¹ıÂËÆ÷
+        // çª—å£æ¶ˆæ¯è¿‡æ»¤å™¨
         internal class MessageFilter : IMessageFilter
         {
             private readonly IntPtr _hWnd;
@@ -134,11 +134,11 @@ namespace WindowControl
 
                 switch (m.Msg)
                 {
-                    case WM_SYSCOMMAND:     // À¹½Ø×î´ó»¯ÏµÍ³ÃüÁî
+                    case WM_SYSCOMMAND:     // æ‹¦æˆªæœ€å¤§åŒ–ç³»ç»Ÿå‘½ä»¤
                         int cmd = m.WParam.ToInt32() & 0xFFF0;
                         return cmd == SC_MAXIMIZE;
 
-                    case WM_GETMINMAXINFO:  // ÉèÖÃ´°¿Ú×î´ó¸ú×Ù³ß´ç
+                    case WM_GETMINMAXINFO:  // è®¾ç½®çª—å£æœ€å¤§è·Ÿè¸ªå°ºå¯¸
                         MINMAXINFO mmi = (MINMAXINFO)Marshal.PtrToStructure(m.LParam, typeof(MINMAXINFO));
                         mmi.ptMaxTrackSize = new POINT(
                             Screen.PrimaryScreen.Bounds.Width,
@@ -150,18 +150,18 @@ namespace WindowControl
             }
         }
 
-        // ´°¿Ú³ß´çÏŞÖÆ½á¹¹Ìå
+        // çª—å£å°ºå¯¸é™åˆ¶ç»“æ„ä½“
         [StructLayout(LayoutKind.Sequential)]
         public struct MINMAXINFO
         {
-            public POINT ptReserved;        // ±£Áô×Ö¶Î
-            public POINT ptMaxSize;         // ×î´ó»¯³ß´ç
-            public POINT ptMaxPosition;     // ×î´ó»¯Î»ÖÃ
-            public POINT ptMinTrackSize;    // ×îĞ¡¿Éµ÷Õû³ß´ç
-            public POINT ptMaxTrackSize;    // ×î´ó¿Éµ÷Õû³ß´ç
+            public POINT ptReserved;        // ä¿ç•™å­—æ®µ
+            public POINT ptMaxSize;         // æœ€å¤§åŒ–å°ºå¯¸
+            public POINT ptMaxPosition;     // æœ€å¤§åŒ–ä½ç½®
+            public POINT ptMinTrackSize;    // æœ€å°å¯è°ƒæ•´å°ºå¯¸
+            public POINT ptMaxTrackSize;    // æœ€å¤§å¯è°ƒæ•´å°ºå¯¸
         }
 
-        // ¶şÎ¬×ø±ê½á¹¹Ìå
+        // äºŒç»´åæ ‡ç»“æ„ä½“
         [StructLayout(LayoutKind.Sequential)]
         public struct POINT
         {
@@ -171,10 +171,10 @@ namespace WindowControl
         }
     }
 
-    // Ëæ»úÊıÀ©Õ¹APIÀà
+    // éšæœºæ•°æ‰©å±•APIç±»
     public static class RandomExtensions
     {
-        // Éú³É¸ßË¹·Ö²¼Ëæ»úÊı(ÕıÌ¬·Ö²¼)
+        // ç”Ÿæˆé«˜æ–¯åˆ†å¸ƒéšæœºæ•°(æ­£æ€åˆ†å¸ƒ)
         public static double NextGaussian(this Random rand)
         {
             double u1 = 1.0 - rand.NextDouble();
@@ -183,87 +183,87 @@ namespace WindowControl
         }
     }
 
-    // °´¼ü¿ØÖÆAPIÀà
+    // æŒ‰é”®æ§åˆ¶APIç±»
     public class InputControl
     {
-        // ÊäÈë¿ØÖÆAPI
+        // è¾“å…¥æ§åˆ¶API
         [DllImport("user32.dll")] private static extern short GetAsyncKeyState(int vKey);
         [DllImport("user32.dll")] private static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, int dwExtraInfo);
 
-        // ĞéÄâ¼üÂë³£Á¿
+        // è™šæ‹Ÿé”®ç å¸¸é‡
         private const int 
-            VK_LBUTTON = 0x01,        // Êó±ê×ó¼ü
-            VK_RBUTTON = 0x02,        // Êó±êÓÒ¼ü
-            VK_W = 0x57,              // W¼ü
-            VK_CAPITAL = 0x14,        // Caps Lock¼ü
-            VK_LSHIFT = 0xA0,         // Shift¼ü
-            VK_LMENU = 0xA4,          // Alt¼ü
-            KEY_PRESSED = 0x8000;     // °´¼ü°´ÏÂ×´Ì¬±êÖ¾
+            VK_LBUTTON = 0x01,        // é¼ æ ‡å·¦é”®
+            VK_RBUTTON = 0x02,        // é¼ æ ‡å³é”®
+            VK_W = 0x57,              // Wé”®
+            VK_CAPITAL = 0x14,        // Caps Locké”®
+            VK_LSHIFT = 0xA0,         // Shifté”®
+            VK_LMENU = 0xA4,          // Alté”®
+            KEY_PRESSED = 0x8000;     // æŒ‰é”®æŒ‰ä¸‹çŠ¶æ€æ ‡å¿—
 
-        // ¼üÅÌÊÂ¼ş³£Á¿
+        // é”®ç›˜äº‹ä»¶å¸¸é‡
         private const uint 
-            KEY_DOWN_EVENT = 0x0000,  // Ä£Äâ°´¼ü°´ÏÂ
-            KEY_UP_EVENT = 0x0002;    // Ä£Äâ°´¼üÊÍ·Å
+            KEY_DOWN_EVENT = 0x0000,  // æ¨¡æ‹ŸæŒ‰é”®æŒ‰ä¸‹
+            KEY_UP_EVENT = 0x0002;    // æ¨¡æ‹ŸæŒ‰é”®é‡Šæ”¾
 
-        // °´¼ü×´Ì¬¸ú×Ù±äÁ¿
-        private static int wPressCount = 0;                              // W¼ü°´ÏÂ¼ÆÊı
-        private static DateTime firstPressTime = DateTime.MinValue;      // Ê×´Î°´ÏÂÊ±¼ä
-        private static DateTime stutterDetectedTime = DateTime.MinValue; // Ëé²½¼ì²âÊ±¼ä
-        private static bool isWPressed = false;                          // W¼üµ±Ç°×´Ì¬
-        private static bool isStutterDetected = false;                   // Ëé²½¼ì²â±êÖ¾
-        private static bool lastLeftAndRightState = false;               // ¸ú×ÙÆÁÏ¢×´Ì¬
+        // æŒ‰é”®çŠ¶æ€è·Ÿè¸ªå˜é‡
+        private static int wPressCount = 0;                              // Wé”®æŒ‰ä¸‹è®¡æ•°
+        private static DateTime firstPressTime = DateTime.MinValue;      // é¦–æ¬¡æŒ‰ä¸‹æ—¶é—´
+        private static DateTime stutterDetectedTime = DateTime.MinValue; // ç¢æ­¥æ£€æµ‹æ—¶é—´
+        private static bool isWPressed = false;                          // Wé”®å½“å‰çŠ¶æ€
+        private static bool isStutterDetected = false;                   // ç¢æ­¥æ£€æµ‹æ ‡å¿—
+        private static bool lastLeftAndRightState = false;               // è·Ÿè¸ªå±æ¯çŠ¶æ€
 
-        // Ê±¼ä´°¿Ú³£Á¿(ºÁÃë)
+        // æ—¶é—´çª—å£å¸¸é‡(æ¯«ç§’)
         private const int 
-            TIME_WINDOW = 1500,       // Ëé²½¼ì²âÊ±¼ä´°¿Ú
-            STUTTER_TIMEOUT = 2500;   // µÈ´ıShiftÊÍ·Å³¬Ê±
+            TIME_WINDOW = 1500,       // ç¢æ­¥æ£€æµ‹æ—¶é—´çª—å£
+            STUTTER_TIMEOUT = 2000;   // ç­‰å¾…Shifté‡Šæ”¾è¶…æ—¶
 
-        // Ïß³Ì°²È«Ëæ»úÊı ÎªÃ¿¸öÏß³ÌÉú³ÉÎ¨Ò»ÖÖ×Ó
+        // çº¿ç¨‹å®‰å…¨éšæœºæ•° ä¸ºæ¯ä¸ªçº¿ç¨‹ç”Ÿæˆå”¯ä¸€ç§å­
         private static readonly ThreadLocal<Random> rand = new ThreadLocal<Random>(() => new Random(Guid.NewGuid().GetHashCode()));
 
-        // ¸ßË¹Ëæ»úÑÓ³ÙÉú³É·½·¨
+        // é«˜æ–¯éšæœºå»¶è¿Ÿç”Ÿæˆæ–¹æ³•
         private static int GetStutterDelay()
         {
-            // ¸ßË¹·Ö²¼Ëæ»úÑÓ³Ù
+            // é«˜æ–¯åˆ†å¸ƒéšæœºå»¶è¿Ÿ
             double gaussian = rand.Value.NextGaussian();
             int delay;
 
-            // 5%¸ÅÂÊ´¥·¢Í»·¢ÑÓ³Ù
-            if (rand.Value.NextDouble() < 0.05)              // 5%¸ÅÂÊ
+            // 10%æ¦‚ç‡è§¦å‘çªå‘å»¶è¿Ÿ
+            if (rand.Value.NextDouble() < 0.10)              // 10%æ¦‚ç‡
             {
-                delay = rand.Value.Next(101, 151);           // 101-151msËæ»úÑÓ³Ù
+                delay = rand.Value.Next(101, 151);           // 101-151mséšæœºå»¶è¿Ÿ
             }
             else
             {
-                delay = (int)(gaussian * 20 + 50);           // ¸ßË¹·Ö²¼²ÎÊı£º¦Ì=50ms(ÖĞĞÄµã), ¦Ò=20ms(±ê×¼²î) 
+                delay = (int)(gaussian * 20 + 50);           // é«˜æ–¯åˆ†å¸ƒå‚æ•°ï¼šÎ¼=50ms(ä¸­å¿ƒç‚¹), Ïƒ=20ms(æ ‡å‡†å·®) 
     
-                // Ìí¼ÓÔëÉù
-                int noise = rand.Value.Next(-10, 11);        // ¡À10msËæ»ú¸ÉÈÅ
-                delay += noise;                              // Ó¦ÓÃÔëÉù
+                // æ·»åŠ å™ªå£°
+                int noise = rand.Value.Next(-10, 11);        // Â±10mséšæœºå¹²æ‰°
+                delay += noise;                              // åº”ç”¨å™ªå£°
 
-                // Ëæ»úÑÓ³Ù·¶Î§ÏŞÖÆ
-                delay = Math.Max(10, Math.Min(delay, 100));   // ×îÖÕÏŞÖÆµ½Ä¿±ê·¶Î§
+                // éšæœºå»¶è¿ŸèŒƒå›´é™åˆ¶
+                delay = Math.Max(10, Math.Min(delay, 100));  // æœ€ç»ˆé™åˆ¶åˆ°ç›®æ ‡èŒƒå›´
             }
             
             return delay;
         }
 
-        // Ö÷¿ØÖÆÑ­»·
+        // ä¸»æ§åˆ¶å¾ªç¯
         public static void Start() 
         {
             while(true) 
             {
 
-                // ¼ì²âW¼üÓëShift¼ü°´ÏÂ×´Ì¬
+                // æ£€æµ‹Wé”®ä¸Shifté”®æŒ‰ä¸‹çŠ¶æ€
                 bool shiftPressed = (GetAsyncKeyState(VK_LSHIFT) & KEY_PRESSED) != 0;
                 bool wCurrentPressed = (GetAsyncKeyState(VK_W) & KEY_PRESSED) != 0;
             
-                // Ëé²½¹¦ÄÜÊµÏÖ
+                // ç¢æ­¥åŠŸèƒ½å®ç°
                 if (shiftPressed)
                 {
-                    if (isStutterDetected)  // ÒÑ¼ì²âµ½Ëé²½
+                    if (isStutterDetected)  // å·²æ£€æµ‹åˆ°ç¢æ­¥
                     {
-                        // ¼ì²é³¬Ê±Î´ËÉ¿ªShift
+                        // æ£€æŸ¥è¶…æ—¶æœªæ¾å¼€Shift
                         if ((DateTime.Now - stutterDetectedTime).TotalMilliseconds > STUTTER_TIMEOUT)
                         {
                             wPressCount = 0;
@@ -272,14 +272,14 @@ namespace WindowControl
                             stutterDetectedTime = DateTime.MinValue;
                         }
                     }
-                    else  // Î´¼ì²âµ½Ëé²½
+                    else  // æœªæ£€æµ‹åˆ°ç¢æ­¥
                     {
-                        // W¼ü°´ÏÂ¶¯×÷¼ì²â
+                        // Wé”®æŒ‰ä¸‹åŠ¨ä½œæ£€æµ‹
                         if (wCurrentPressed && !isWPressed)
                         {
                             isWPressed = true;
                         
-                            // ÖØÖÃ¼ÆÊıÌõ¼ş(Ê×´Î°´ÏÂ»ò³¬Ê±)
+                            // é‡ç½®è®¡æ•°æ¡ä»¶(é¦–æ¬¡æŒ‰ä¸‹æˆ–è¶…æ—¶)
                             if (wPressCount == 0 || 
                                 (DateTime.Now - firstPressTime).TotalMilliseconds > TIME_WINDOW)
                             {
@@ -290,21 +290,22 @@ namespace WindowControl
                             {
                                 wPressCount++;
                             
-                                // ¼ì²âËé²½Ìõ¼ş(2´Îµã»÷ÇÒÔÚÊ±¼ä´°¿ÚÄÚ)
+                                // æ£€æµ‹ç¢æ­¥æ¡ä»¶(2æ¬¡ç‚¹å‡»ä¸”åœ¨æ—¶é—´çª—å£å†…)
                                 if (wPressCount >= 2 && 
                                     (DateTime.Now - firstPressTime).TotalMilliseconds <= TIME_WINDOW)
                                 {
                                     isStutterDetected = true;
-                                    stutterDetectedTime = DateTime.Now;  // ¼ÇÂ¼¼ì²âÊ±¼ä
+                                    stutterDetectedTime = DateTime.Now;  // è®°å½•æ£€æµ‹æ—¶é—´
                                 }
                             }
                         }
-                        // W¼üÊÍ·Å¶¯×÷¼ì²â
+                        // Wé”®é‡Šæ”¾åŠ¨ä½œæ£€æµ‹
                         else if (!wCurrentPressed && isWPressed)
                         {
                             isWPressed = false;
                         }
-                        // ³¬Ê±ÖØÖÃ¼ÆÊı
+
+                        // è¶…æ—¶é‡ç½®è®¡æ•°
                         else if (wPressCount > 0 && 
                                  (DateTime.Now - firstPressTime).TotalMilliseconds > TIME_WINDOW)
                         {
@@ -313,18 +314,18 @@ namespace WindowControl
                         }
                     }
                 }
-                else  // ShiftÎ´°´ÏÂ×´Ì¬´¦Àí
+                else  // ShiftæœªæŒ‰ä¸‹çŠ¶æ€å¤„ç†
                 {
-                    // ËÉ¿ªShiftºó´¥·¢Alt¼ü
+                    // æ¾å¼€Shiftåè§¦å‘Alté”®
                     if (isStutterDetected)
                     {
-                        Thread.Sleep(GetStutterDelay());                       // Ê¹ÓÃ¸ßË¹Ëæ»úÑÓ³Ù
-                        keybd_event((byte)VK_LMENU, 0x38, KEY_DOWN_EVENT, 0);  // Ä£ÄâAlt°´ÏÂ
-                        Thread.Sleep(GetStutterDelay());                       // Ê¹ÓÃ¸ßË¹Ëæ»úÑÓ³Ù
-                        keybd_event((byte)VK_LMENU, 0x38, KEY_UP_EVENT, 0);    // Ä£ÄâAltÊÍ·Å
+                        Thread.Sleep(GetStutterDelay());                       // ä½¿ç”¨é«˜æ–¯éšæœºå»¶è¿Ÿ
+                        keybd_event((byte)VK_LMENU, 0x38, KEY_DOWN_EVENT, 0);  // æ¨¡æ‹ŸAltæŒ‰ä¸‹
+                        Thread.Sleep(GetStutterDelay());                       // ä½¿ç”¨é«˜æ–¯éšæœºå»¶è¿Ÿ
+                        keybd_event((byte)VK_LMENU, 0x38, KEY_UP_EVENT, 0);    // æ¨¡æ‹ŸAlté‡Šæ”¾
                     }
                 
-                    // ÖØÖÃËùÓĞ×´Ì¬
+                    // é‡ç½®æ‰€æœ‰çŠ¶æ€
                     if (wPressCount > 0 || isStutterDetected)
                     {
                         wPressCount = 0;
@@ -336,26 +337,28 @@ namespace WindowControl
                 }
 
 
-                // ¼ì²âµ±Ç°Êó±ê×óÓÒ¼ü×´Ì¬
+                // æ£€æµ‹å½“å‰é¼ æ ‡å·¦å³é”®çŠ¶æ€
                 bool leftPressed = (GetAsyncKeyState(VK_LBUTTON) & KEY_PRESSED) != 0;
                 bool rightPressed = (GetAsyncKeyState(VK_RBUTTON) & KEY_PRESSED) != 0;
                 bool bothPressed = leftPressed && rightPressed;
 
-                // ÆÁÏ¢¹¦ÄÜÊµÏÖ
+                // å±æ¯åŠŸèƒ½å®ç°
                 if (bothPressed && !lastLeftAndRightState) 
                 {
-                    Thread.Sleep(GetStutterDelay());                     // Ê¹ÓÃ¸ßË¹Ëæ»úÑÓ³Ù
-                    keybd_event((byte)VK_CAPITAL, 0, KEY_DOWN_EVENT, 0); // Ä£ÄâCaps Lock°´ÏÂ
+                    Thread.Sleep(GetStutterDelay());                     // ä½¿ç”¨é«˜æ–¯éšæœºå»¶è¿Ÿ
+                    keybd_event((byte)VK_CAPITAL, 0, KEY_DOWN_EVENT, 0); // æ¨¡æ‹ŸCaps LockæŒ‰ä¸‹
                 }
-                // µ±ÈÎÒâÒ»¼üËÉ¿ªÊ±ÊÍ·ÅCaps Lock
+
+                // å½“ä»»æ„ä¸€é”®æ¾å¼€æ—¶é‡Šæ”¾Caps Lock
                 else if (!bothPressed && lastLeftAndRightState) 
                 {
-                    Thread.Sleep(GetStutterDelay());                     // Ê¹ÓÃ¸ßË¹Ëæ»úÑÓ³Ù
-                    keybd_event((byte)VK_CAPITAL, 0, KEY_UP_EVENT, 0);   // Ä£ÄâCaps LockÊÍ·Å
+                    Thread.Sleep(GetStutterDelay());                     // ä½¿ç”¨é«˜æ–¯éšæœºå»¶è¿Ÿ
+                    keybd_event((byte)VK_CAPITAL, 0, KEY_UP_EVENT, 0);   // æ¨¡æ‹ŸCaps Locké‡Šæ”¾
                 }
-                lastLeftAndRightState = bothPressed;                     // ¸üĞÂ×´Ì¬¸ú×Ù
 
-                // Ö÷Ñ­»·ÑÓ³Ù(1-9ms)
+                lastLeftAndRightState = bothPressed;                     // æ›´æ–°çŠ¶æ€è·Ÿè¸ª
+
+                // ä¸»å¾ªç¯å»¶è¿Ÿ(1-9ms)
                 Thread.Sleep(rand.Value.Next(1, 10));
             }
         }
@@ -363,56 +366,56 @@ namespace WindowControl
 }
 '@
 
-# ´°¿Ú³õÊ¼»¯(ÉèÖÃ¿ØÖÆÌ¨Î»ÖÃºÍ³ß´ç)
+# çª—å£åˆå§‹åŒ–(è®¾ç½®æ§åˆ¶å°ä½ç½®å’Œå°ºå¯¸)
 try 
 {
-    # »ñÈ¡¿ØÖÆÌ¨´°¿Ú¾ä±ú
+    # è·å–æ§åˆ¶å°çª—å£å¥æŸ„
     $consoleHandle = [WindowControl.WindowAPI]::GetConsoleWindow()
 
-    # ³õÊ¼»¯Éè±¸ÉÏÏÂÎÄ
+    # åˆå§‹åŒ–è®¾å¤‡ä¸Šä¸‹æ–‡
     $hdc = [IntPtr]::Zero
 
-    # °²È«»ñÈ¡Éè±¸ÉÏÏÂÎÄ
+    # å®‰å…¨è·å–è®¾å¤‡ä¸Šä¸‹æ–‡
     $hdc = [WindowControl.WindowAPI]::GetDC($consoleHandle)
     if ($hdc -eq [IntPtr]::Zero) {
-        throw "ÎŞ·¨»ñÈ¡Éè±¸ÉÏÏÂÎÄ"
+        throw "æ— æ³•è·å–è®¾å¤‡ä¸Šä¸‹æ–‡"
     }
 
-    # DPI×ÔÊÊÓ¦¼ÆËã(¶àÏÔÊ¾Æ÷¼æÈİ)
-    $dpiX = [WindowControl.WindowAPI]::GetDeviceCaps($hdc, 90)  # Ë®Æ½DPI
-    $dpiY = [WindowControl.WindowAPI]::GetDeviceCaps($hdc, 88)  # ´¹Ö±DPI
+    # DPIè‡ªé€‚åº”è®¡ç®—(å¤šæ˜¾ç¤ºå™¨å…¼å®¹)
+    $dpiX = [WindowControl.WindowAPI]::GetDeviceCaps($hdc, 90)  # æ°´å¹³DPI
+    $dpiY = [WindowControl.WindowAPI]::GetDeviceCaps($hdc, 88)  # å‚ç›´DPI
     if ($dpiX -eq 0 -or $dpiY -eq 0) {
-        throw "ÎŞ·¨»ñÈ¡ DPI ĞÅÏ¢"
+        throw "æ— æ³•è·å– DPI ä¿¡æ¯"
     }
 
-    # ¼ÆËã×Ö·û³ß´ç(»ùÓÚDPI£¬¼ÙÉèÄ¬ÈÏ×ÖÌåÎª8x16)
-    $charWidth = [Math]::Round(8 * ($dpiX / 96))   # 96 Îª»ù×¼ DPI
+    # è®¡ç®—å­—ç¬¦å°ºå¯¸(åŸºäºDPIï¼Œå‡è®¾é»˜è®¤å­—ä½“ä¸º8x16)
+    $charWidth = [Math]::Round(8 * ($dpiX / 96))   # 96 ä¸ºåŸºå‡† DPI
     $charHeight = [Math]::Round(16 * ($dpiY / 96))
 
-    # ¼ÆËã´°¿Ú³ß´ç(70x20×Ö·û±ê×¼¿ØÖÆÌ¨)
+    # è®¡ç®—çª—å£å°ºå¯¸(70x20å­—ç¬¦æ ‡å‡†æ§åˆ¶å°)
     $windowWidth = [Math]::Round(70 * $charWidth)
     $windowHeight = [Math]::Round(20 * $charHeight)
 
-    # ´°¿Ú¾ÓÖĞËã·¨
+    # çª—å£å±…ä¸­ç®—æ³•
     $workArea = [System.Windows.Forms.Screen]::FromHandle($consoleHandle).WorkingArea
     $xPos = [Math]::Max($workArea.X + ($workArea.Width - $windowWidth) / 2, 0)
     $yPos = [Math]::Max($workArea.Y + ($workArea.Height - $windowHeight) / 2, 0)
 
-    # ÒÆ¶¯²¢µ÷Õû¿ØÖÆÌ¨´°¿Ú
+    # ç§»åŠ¨å¹¶è°ƒæ•´æ§åˆ¶å°çª—å£
     if (-not [WindowControl.WindowAPI]::MoveWindow($consoleHandle, $xPos, $yPos, $windowWidth, $windowHeight, $true)) {
-        throw "´°¿ÚÎ»ÖÃµ÷ÕûÊ§°Ü"
+        throw "çª—å£ä½ç½®è°ƒæ•´å¤±è´¥"
     }
 
-    # ¿ØÖÆÌ¨»º³åÇøÉèÖÃ(·ÀÖ¹ÄÚÈİ½Ø¶Ï)
+    # æ§åˆ¶å°ç¼“å†²åŒºè®¾ç½®(é˜²æ­¢å†…å®¹æˆªæ–­)
     # $Host.UI.RawUI.BufferSize = New-Object System.Management.Automation.Host.Size(70, 20)
     # $Host.UI.RawUI.WindowSize = $Host.UI.RawUI.BufferSize
 }
 catch
 {
-    # Òì³£´¦Àí
-    Write-Host "´°¿Ú³õÊ¼»¯Ê§°Ü: $($_.Exception.Message)" -ForegroundColor Red
+    # å¼‚å¸¸å¤„ç†
+    Write-Host "çª—å£åˆå§‹åŒ–å¤±è´¥: $($_.Exception.Message)" -ForegroundColor Red
     
-    # Èç¹ûÊÇÉè±¸ÉÏÏÂÎÄÏà¹Ø´íÎó£¬ÌáÇ°ÊÍ·Å×ÊÔ´
+    # å¦‚æœæ˜¯è®¾å¤‡ä¸Šä¸‹æ–‡ç›¸å…³é”™è¯¯ï¼Œæå‰é‡Šæ”¾èµ„æº
     if ($hdc -ne [IntPtr]::Zero) {
         [void][WindowControl.WindowAPI]::ReleaseDC($consoleHandle, $hdc)
         $hdc = [IntPtr]::Zero
@@ -421,42 +424,42 @@ catch
 }
 finally 
 {
-    # ÑÏ¸ñµÄÈıÖØÑéÖ¤Âß¼­
+    # ä¸¥æ ¼çš„ä¸‰é‡éªŒè¯é€»è¾‘
     if ($hdc -ne [IntPtr]::Zero -and $consoleHandle -ne [IntPtr]::Zero) {
         try 
         {
-            # ½ÓÊÕ·µ»ØÖµ²¢¼ì²é
+            # æ¥æ”¶è¿”å›å€¼å¹¶æ£€æŸ¥
             $releaseResult = [WindowControl.WindowAPI]::ReleaseDC($consoleHandle, $hdc)
             if ($releaseResult -ne 1) {
                 $lastError = [Runtime.InteropServices.Marshal]::GetLastWin32Error()
-                Write-Host "DC ÊÍ·ÅÊ§°Ü (´íÎóÂë: 0x$($lastError.ToString('X8')))" -ForegroundColor Yellow
+                Write-Host "DC é‡Šæ”¾å¤±è´¥ (é”™è¯¯ç : 0x$($lastError.ToString('X8')))" -ForegroundColor Yellow
             }
         }
         catch {
-            Write-Host "DC ÊÍ·ÅÒì³£: $($_.Exception.Message)" -ForegroundColor Red
+            Write-Host "DC é‡Šæ”¾å¼‚å¸¸: $($_.Exception.Message)" -ForegroundColor Red
         }
         finally 
         {
-            # Ô­×Ó²Ù×÷ÖÃ¿Õ¾ä±ú
+            # åŸå­æ“ä½œç½®ç©ºå¥æŸ„
             [System.Threading.Thread]::VolatileWrite([ref]$hdc, [IntPtr]::Zero)
             [System.Threading.Thread]::VolatileWrite([ref]$consoleHandle, [IntPtr]::Zero)
         }
     }
 }
 
-# ´°¿ÚËø¶¨
+# çª—å£é”å®š
 [WindowControl.WindowAPI]::LockWindow()
 Start-Sleep -Milliseconds 10
 
-# Òş²Ø¿ØÖÆÌ¨¹â±ê
+# éšè—æ§åˆ¶å°å…‰æ ‡
 [WindowControl.WindowAPI]::HideConsoleCursor()
 
-# ÆôÓÃANSIÑÕÉ«Ö§³Ö(ÏÖ´úPowerShellÖÕ¶Ë)
+# å¯ç”¨ANSIé¢œè‰²æ”¯æŒ(ç°ä»£PowerShellç»ˆç«¯)
 if ($Host.UI.RawUI -and $Host.UI.RawUI.SupportsVirtualTerminal) {
     $Host.UI.RawUI.UseVirtualTerminal = $true
 }
 
-# »¶Ó­ĞÅÏ¢
+# æ¬¢è¿ä¿¡æ¯
 $multiText = @"
 $([char]27)[1;32m
 
@@ -479,25 +482,25 @@ $([char]27)[0m
 "@
 Write-Output $multiText
 
-# ÓÎÏ·ÅäÖÃ
+# æ¸¸æˆé…ç½®
 $launcherPath = "D:\WeGame\wegame.exe"
 
-# Æô¶¯ÓÎÏ·
+# å¯åŠ¨æ¸¸æˆ
 if (Test-Path -LiteralPath $launcherPath -PathType Leaf) {
     $null = Start-Process $launcherPath -WindowStyle Minimized -PassThru -ErrorAction SilentlyContinue
     Stop-Process -Name "v2rayN" -Force -ErrorAction SilentlyContinue
 }
 
-# 3Ãëºó×îĞ¡»¯´°¿Ú
+# 3ç§’åæœ€å°åŒ–çª—å£
 $timer = [System.Diagnostics.Stopwatch]::StartNew()
 while ($timer.Elapsed.TotalSeconds -lt 3) {
     Start-Sleep -Milliseconds 100
 }
 
-# µ÷ÓÃ×îĞ¡»¯·½·¨
+# è°ƒç”¨æœ€å°åŒ–æ–¹æ³•
 if (-not $global:isInputControlActive) {  
     [WindowControl.WindowAPI]::MinimizeWindow()  
 } 
 
-# Æô¶¯Ö÷Ñ­»·
+# å¯åŠ¨ä¸»å¾ªç¯
 [WindowControl.InputControl]::Start()
