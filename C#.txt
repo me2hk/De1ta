@@ -2,7 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Threading;
 
-namespace InputControlCore
+namespace WindowControl 
 {
     // 随机数扩展API类
     public static class RandomExtensions
@@ -52,8 +52,7 @@ namespace InputControlCore
             STUTTER_TIMEOUT = 2000;   // 等待Shift释放超时
 
         // 线程安全随机数 为每个线程生成唯一种子
-        private static readonly ThreadLocal<Random> rand = new ThreadLocal<Random>(() => 
-            new Random(Guid.NewGuid().GetHashCode()));
+        private static readonly ThreadLocal<Random> rand = new ThreadLocal<Random>(() => new Random(Guid.NewGuid().GetHashCode()));
 
         // 高斯随机延迟生成方法
         private static int GetStutterDelay()
@@ -85,11 +84,9 @@ namespace InputControlCore
         // 主控制循环
         public static void Start() 
         {
-            // 设置线程文化以避免区域设置问题
-            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-            
             while(true) 
             {
+
                 // 检测W键与Shift键按下状态
                 bool shiftPressed = (GetAsyncKeyState(VK_LSHIFT) & KEY_PRESSED) != 0;
                 bool wCurrentPressed = (GetAsyncKeyState(VK_W) & KEY_PRESSED) != 0;
