@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Threading;
 
+//程序主空间
 namespace De1ta
 {
 
@@ -230,3 +231,4 @@ namespace De1ta
         }
     }
 }
+
