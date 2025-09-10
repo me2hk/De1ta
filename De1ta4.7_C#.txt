@@ -58,14 +58,14 @@ namespace De1ta
         // 线程安全随机数 为每个线程生成唯一种子
         private static readonly ThreadLocal<Random> rand = new ThreadLocal<Random>(() => new Random(Guid.NewGuid().GetHashCode()));
 
-        // 高斯随机延迟生成方法
+        // 高斯分布随机延迟
         private static int GetStutterDelay()
         {
-            // 高斯分布随机延迟
+            // 随机延迟生成方法
             double gaussian = rand.Value.NextGaussian();
             int delay;
 
-            // 10%概率触发突发延迟
+            // 10%概率突发延迟
             if (rand.Value.NextDouble() < 0.10)              // 10%概率
             {
                 delay = rand.Value.Next(101, 151);           // 101-151ms随机延迟
@@ -231,4 +231,5 @@ namespace De1ta
         }
     }
 }
+
 
