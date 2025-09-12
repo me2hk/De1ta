@@ -321,7 +321,7 @@ namespace De1ta
             string processName = currentProcess.ProcessName;                   // 获取当前进程的名称
             int processId = currentProcess.Id;                                 // 获取当前进程的PID
 
-            string message = "           版本:  V4.8.0"  +"\n" + "           名称:  " + processName + ".exe" + "\n" + "           PID:   " + processId;
+            string message = "          版本:  V4.8.0"  +"\n" + "          名称:  " + processName + ".exe" + "\n" + "          PID:   " + processId;
             
             // 使用MessageBox显示信息
             MessageBox(IntPtr.Zero, message, "关于", 0);
@@ -346,4 +346,5 @@ namespace De1ta
         }
     }
 }
+
 
