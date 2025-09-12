@@ -264,7 +264,7 @@ namespace De1ta
         // 监控进程方法
         private static void MonitorProcess()
         {
-            string targetProcess = "DeltaForceClient-Win64-Shipping";         // 监控的进程名
+            string targetProcess = "DeltaForceClient-Win64-Shipping";          // 监控的进程名
 
             // 持续监控循环
             while (isMonitoring)
@@ -299,6 +299,7 @@ namespace De1ta
         }
     }
 }
+
 
 
 
