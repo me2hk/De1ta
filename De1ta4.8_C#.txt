@@ -242,7 +242,7 @@ namespace De1ta
             // 如果已经在监控中，则直接返回，避免重复启动
             if (isMonitoring) return;
 
-            isMonitoring = true;                                               // 设置监控状态为true
+            isMonitoring = true;                                              // 设置监控状态为true
 
             // 创建并启动监控线程，设置为后台线程
             monitorThread = new Thread(MonitorProcess) { IsBackground = true };
@@ -252,19 +252,19 @@ namespace De1ta
         // 停止进程监控
         public static void StopMonitoring()
         {
-            isMonitoring = false;                                              // 设置监控状态为false
+            isMonitoring = false;                                             // 设置监控状态为false
 
             // 如果监控线程存在且仍在运行，等待其结束
             if (monitorThread != null && monitorThread.IsAlive)
             {
-                monitorThread.Join(1000);                                      // 等待线程结束
+                monitorThread.Join(1000);                                     // 等待线程结束
             }
         }
 
         // 监控进程方法
         private static void MonitorProcess()
         {
-            string targetProcess = "DeltaForceClient-Win64-Shipping";          // 监控的进程名
+            string targetProcess = "DeltaForceClient-Win64-Shipping";        // 监控的进程名
 
             // 持续监控循环
             while (isMonitoring)
@@ -299,9 +299,3 @@ namespace De1ta
         }
     }
 }
-
-
-
-
-
-
