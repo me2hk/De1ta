@@ -317,9 +317,9 @@ namespace De1ta
         // 显示程序信息方法
         private static void ShowProcessInfo(string targetProcessName)
         {
-            Process currentProcess = Process.GetCurrentProcess();
-            string processName = currentProcess.ProcessName;
-            int processId = currentProcess.Id;
+            Process currentProcess = Process.GetCurrentProcess();              // 获取当前正在运行的进程
+            string processName = currentProcess.ProcessName;                   // 获取当前进程的名称
+            int processId = currentProcess.Id;                                 // 获取当前进程的PID
 
             string message = "           版本:  V4.8.0"  +"\n" + "           名称:  " + processName + ".exe" + "\n" + "           PID:   " + processId;
             
@@ -346,4 +346,5 @@ namespace De1ta
         }
     }
 }
+
 
