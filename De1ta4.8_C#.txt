@@ -69,20 +69,20 @@ namespace De1ta
             int delay;
 
             // 10%概率触发突发延迟
-            if (rand.Value.NextDouble() < 0.10)                 // 10%概率
+            if (rand.Value.NextDouble() < 0.10)                          // 10%概率
             {
-                delay = rand.Value.Next(101, 151);              // 101-151ms随机延迟
+                delay = rand.Value.Next(101, 151);                       // 101-151ms随机延迟
             }
             else
             {
-                delay = (int)(gaussian * 20 + 50);              // 高斯分布参数:μ=50ms(中心点),σ=20ms(标准差) 
+                delay = (int)(gaussian * 20 + 50);                       // 高斯分布参数:μ=50ms(中心点),σ=20ms(标准差) 
 
                 // 添加噪声
-                int noise = rand.Value.Next(-10, 11);           // ±10ms随机干扰
-                delay += noise;                                 // 应用噪声
+                int noise = rand.Value.Next(-10, 11);                    // ±10ms随机干扰
+                delay += noise;                                          // 应用噪声
 
                 // 随机延迟范围
-                delay = Math.Max(10, Math.Min(delay, 100));     // 最终限制到目标范围
+                delay = Math.Max(10, Math.Min(delay, 100));             // 最终限制到目标范围
             }
 
             return delay;
@@ -98,12 +98,12 @@ namespace De1ta
             if (!running)
             {
                 // 重置所有状态
-                wPressCount = 0;                                // 重置W键按下计数
-                firstPressTime = DateTime.MinValue;             // 重置首次按下时间
-                stutterDetectedTime = DateTime.MinValue;        // 重置碎步检测时间
-                isWPressed = false;                             // 重置W键当前状态
-                isStutterDetected = false;                      // 重置碎步检测标志
-                lastLeftAndRightState = false;                  // 重置鼠标跟踪状态
+                wPressCount = 0;                                         // 重置W键按下计数
+                firstPressTime = DateTime.MinValue;                      // 重置首次按下时间
+                stutterDetectedTime = DateTime.MinValue;                 // 重置碎步检测时间
+                isWPressed = false;                                      // 重置W键当前状态
+                isStutterDetected = false;                               // 重置碎步检测标志
+                lastLeftAndRightState = false;                           // 重置鼠标跟踪状态
             }
         }
 
@@ -116,8 +116,8 @@ namespace De1ta
                 // 检查是否应该运行
                 if (!isRunning)
                 {
-                    Thread.Sleep(GetStutterDelay());            // 使用高斯随机延迟
-                    continue;                                   // 跳过当前循环迭代
+                    Thread.Sleep(GetStutterDelay());                     // 使用高斯随机延迟
+                    continue;                                            // 跳过当前循环迭代
                 }
 
                 // 检测W键与Shift键按下状态
@@ -125,9 +125,9 @@ namespace De1ta
                 bool wCurrentPressed = (GetAsyncKeyState(VK_W) & KEY_PRESSED) != 0;
 
                 // 碎步功能实现
-                if (shiftPressed)                               // 如果Shift键被按下
+                if (shiftPressed)                                        // 如果Shift键被按下
                 {
-                    if (isStutterDetected)                      // 已检测到碎步
+                    if (isStutterDetected)                               // 已检测到碎步
                     {
                         // 检查超时未松开Shift
                         if ((DateTime.Now - stutterDetectedTime).TotalMilliseconds > STUTTER_TIMEOUT)
@@ -138,26 +138,26 @@ namespace De1ta
                             isStutterDetected = false;                   // 重置碎步检测标志
                         }
                     }
-                    else                                        // 未检测到碎步
+                    else                                                 // 未检测到碎步
                     {
                         // W键按下动作检测
-                        if (wCurrentPressed && !isWPressed)     // W键当前按下且之前未按下
+                        if (wCurrentPressed && !isWPressed)              // W键当前按下且之前未按下
                         {
-                            isWPressed = true;                  // 更新W键状态为按下
+                            isWPressed = true;                           // 更新W键状态为按下
 
                             // 重置计数条件(首次按下或超时)
-                            if (wPressCount == 0 ||             // 首次按下W键
+                            if (wPressCount == 0 ||                      // 首次按下W键
                                 (DateTime.Now - firstPressTime).TotalMilliseconds > TIME_WINDOW)
                             {
-                                wPressCount = 1;                // 重置计数为1
-                                firstPressTime = DateTime.Now;  // 记录首次按下时间
+                                wPressCount = 1;                         // 重置计数为1
+                                firstPressTime = DateTime.Now;           // 记录首次按下时间
                             }
-                            else                                // 非首次按下且在时间窗口内
+                            else                                         // 非首次按下且在时间窗口内
                             {
-                                wPressCount++;                  // 增加按下计数
+                                wPressCount++;                           // 增加按下计数
 
                                 // 检测碎步条件(2次点击且在时间窗口内)
-                                if (wPressCount >= 2 &&         // 至少按下2次
+                                if (wPressCount >= 2 &&                  // 至少按下2次
                                     (DateTime.Now - firstPressTime).TotalMilliseconds <= TIME_WINDOW)
                                 {
                                     isStutterDetected = true;            // 标记已检测到碎步
@@ -166,24 +166,24 @@ namespace De1ta
                             }
                         }
                         // W键释放动作检测
-                        else if (!wCurrentPressed && isWPressed)   // W键当前未按下且之前按下
+                        else if (!wCurrentPressed && isWPressed)         // W键当前未按下且之前按下
                         {
-                            isWPressed = false;                    // 更新W键状态为释放
+                            isWPressed = false;                          // 更新W键状态为释放
                         }
 
                         // 超时重置计数
                         else if (wPressCount > 0 &&
                                  (DateTime.Now - firstPressTime).TotalMilliseconds > TIME_WINDOW)
                         {
-                            wPressCount = 0;                       // 重置按下计数
-                            firstPressTime = DateTime.MinValue;    // 重置首次按下时间
+                            wPressCount = 0;                             // 重置按下计数
+                            firstPressTime = DateTime.MinValue;          // 重置首次按下时间
                         }
                     }
                 }
-                else                                               // Shift未按下状态处理
+                else                                                     // Shift未按下状态处理
                 {
                     // 松开Shift后触发Alt键
-                    if (isStutterDetected)                         // 如果已检测到碎步
+                    if (isStutterDetected)                               // 如果已检测到碎步
                     {
                         Thread.Sleep(GetStutterDelay());                       // 使用高斯随机延迟
                         keybd_event((byte)VK_LMENU, 0x38, KEY_DOWN_EVENT, 0);  // 模拟Alt按下
@@ -200,7 +200,7 @@ namespace De1ta
                         isStutterDetected = false;                             // 重置碎步检测标志
                     }
 
-                    isWPressed = false;                            // 重置W键当前状态
+                    isWPressed = false;                                  // 重置W键当前状态
                 }
 
                 // 检测当前鼠标左右键状态
@@ -299,5 +299,6 @@ namespace De1ta
         }
     }
 }
+
 
 
