@@ -233,6 +233,20 @@ namespace De1ta
     // 进程监控类
     public static class ProcessMonitor
     {
+        // 输入控制API
+        [DllImport("user32.dll")]
+        private static extern short GetAsyncKeyState(int vKey);
+
+        // 信息框API
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        private static extern int MessageBox(IntPtr hWnd, string text, string caption, uint type);
+
+        // 虚拟键码常量
+        private const int
+            VK_CONTROL = 0x11,        // Ctrl键
+            VK_HOME = 0x24,           // Home键
+            KEY_PRESSED = 0x8000;     // 按键按下状态标志
+            
         private static Thread monitorThread;                                   // 监控线程,用于在后台持续监控目标进程
         private static bool isMonitoring = false;                              // 监控状态标志
 
@@ -257,30 +271,63 @@ namespace De1ta
             // 如果监控线程存在且仍在运行，等待其结束
             if (monitorThread != null && monitorThread.IsAlive)
             {
-                monitorThread.Join(1000);                                     // 等待线程结束
+                monitorThread.Join(100);                                      // 等待线程结束
             }
         }
 
         // 监控进程方法
         private static void MonitorProcess()
         {
-            string targetProcess = "DeltaForceClient-Win64-Shipping";        // 监控的进程名
+            string targetProcess = "DeltaForceClient-Win64-Shipping";         // 监控的进程名
+            bool hotKeyPressed = false;                                       // 热键按下状态标志
 
             // 持续监控循环
             while (isMonitoring)
             {
+                // 检查热键Ctrl+Home是否按下
+                bool ctrlPressed = (GetAsyncKeyState(VK_CONTROL) & KEY_PRESSED) != 0;
+                bool homePressed = (GetAsyncKeyState(VK_HOME) & KEY_PRESSED) != 0;
+                
+                if (ctrlPressed && homePressed)
+                {
+                    if (!hotKeyPressed)
+                    {
+                        hotKeyPressed = true;
+
+                        // 显示进程信息
+                        ShowProcessInfo(targetProcess);
+                    }
+                }
+                else
+                {
+                    hotKeyPressed = false;
+                }
+                                
                 // 检查指定名称的进程是否存在
                 bool processExists = Process.GetProcessesByName(targetProcess).Length > 0;
 
                 // 根据进程是否存在设置输入控制类的运行状态
                 InputControl.SetRunningState(processExists);
 
-                // 每隔1秒检查一次
-                Thread.Sleep(1000);
+                // 间隔100ms
+                Thread.Sleep(100);
             }
         }
-    }
 
+        // 显示程序信息方法
+        private static void ShowProcessInfo(string targetProcessName)
+        {
+            Process currentProcess = Process.GetCurrentProcess();
+            string processName = currentProcess.ProcessName;
+            int processId = currentProcess.Id;
+
+            string message = "           版本:  V4.8.0"  +"\n" + "           名称:  " + processName + ".exe" + "\n" + "           PID:   " + processId;
+            
+            // 使用MessageBox显示信息
+            MessageBox(IntPtr.Zero, message, "关于", 0);
+        }
+    }
+    
     // 程序入口类
     class Program
     {
