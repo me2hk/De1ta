@@ -246,7 +246,7 @@ namespace De1ta
             VK_CONTROL = 0x11,        // Ctrl键
             VK_HOME = 0x24,           // Home键
             KEY_PRESSED = 0x8000;     // 按键按下状态标志
-            
+
         private static Thread monitorThread;                                   // 监控线程,用于在后台持续监控目标进程
         private static bool isMonitoring = false;                              // 监控状态标志
 
@@ -287,7 +287,7 @@ namespace De1ta
                 // 检查热键Ctrl+Home是否按下
                 bool ctrlPressed = (GetAsyncKeyState(VK_CONTROL) & KEY_PRESSED) != 0;
                 bool homePressed = (GetAsyncKeyState(VK_HOME) & KEY_PRESSED) != 0;
-                
+
                 if (ctrlPressed && homePressed)
                 {
                     if (!hotKeyPressed)
@@ -302,7 +302,7 @@ namespace De1ta
                 {
                     hotKeyPressed = false;
                 }
-                                
+
                 // 检查指定名称的进程是否存在
                 bool processExists = Process.GetProcessesByName(targetProcess).Length > 0;
 
@@ -321,13 +321,13 @@ namespace De1ta
             string processName = currentProcess.ProcessName;                   // 获取当前进程的名称
             int processId = currentProcess.Id;                                 // 获取当前进程的PID
 
-            string message = "          版本:  V4.8.0"  +"\n" + "          名称:  " + processName + ".exe" + "\n" + "          PID:   " + processId;
-            
+            string message = "           版本:  V4.8.0" + "\n" + "           名称:  " + processName + ".exe" + "\n" + "           PID:   " + processId;
+
             // 使用MessageBox显示信息
             MessageBox(IntPtr.Zero, message, "关于", 0);
         }
     }
-    
+
     // 程序入口类
     class Program
     {
@@ -346,5 +346,3 @@ namespace De1ta
         }
     }
 }
-
-
