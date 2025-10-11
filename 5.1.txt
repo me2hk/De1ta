@@ -47,8 +47,8 @@ namespace De1ta
             double gaussian = NextGaussian(rand.Value);
             int delay;
 
-            // 10%概率触发突发延迟
-            if (rand.Value.NextDouble() < 0.10)                                // 10%概率
+            // 20%概率触发突发延迟
+            if (rand.Value.NextDouble() < 0.20)                                // 20%概率
             {
                 delay = rand.Value.Next(101, 151);                             // 101-151ms随机延迟
             }
