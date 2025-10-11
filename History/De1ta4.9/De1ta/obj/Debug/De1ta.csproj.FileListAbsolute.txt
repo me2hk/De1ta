@@ -1,6 +1,0 @@
-C:\Users\Administrator\Desktop\De1ta\De1ta\bin\Debug\De1ta.exe.config
-C:\Users\Administrator\Desktop\De1ta\De1ta\bin\Debug\De1ta.exe
-C:\Users\Administrator\Desktop\De1ta\De1ta\bin\Debug\De1ta.pdb
-C:\Users\Administrator\Desktop\De1ta\De1ta\obj\Debug\De1ta.csprojResolveAssemblyReference.cache
-C:\Users\Administrator\Desktop\De1ta\De1ta\obj\Debug\De1ta.exe
-C:\Users\Administrator\Desktop\De1ta\De1ta\obj\Debug\De1ta.pdb
