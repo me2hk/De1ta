@@ -1,0 +1,108 @@
+using System;
+using System.Runtime.InteropServices;
+using System.Threading;
+
+// 主空间
+namespace De1ta
+{
+    class Program
+    {
+        // 输入控制API
+        [DllImport("user32.dll")]
+        private static extern short GetAsyncKeyState(int vKey);
+
+        [DllImport("user32.dll")]
+        private static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, int dwExtraInfo);
+
+        // 虚拟键码常量
+        private const int
+            VK_LBUTTON = 0x01,                                                 // 鼠标左键
+            VK_RBUTTON = 0x02,                                                 // 鼠标右键
+            VK_CAPITAL = 0x14,                                                 // Caps Lock键
+            KEY_PRESSED = 0x8000;                                              // 按键状态标志
+
+        // 键盘事件常量
+        private const uint
+            KEY_DOWN_EVENT = 0x0000,                                           // 模拟按键按下
+            KEY_UP_EVENT = 0x0002;                                             // 模拟按键释放
+
+        // 按键状态变量
+        private static bool lastLeftAndRightState = false;                     // 鼠标跟踪状态
+
+        // 线程安全随机数,为每个线程生成唯一种子
+        private static readonly ThreadLocal<Random> rand = new ThreadLocal<Random>(() => new Random(Guid.NewGuid().GetHashCode()));
+
+        // 随机数扩展类
+        private static double NextGaussian(Random random)
+        {
+            double u1 = 1.0 - random.NextDouble();
+            double u2 = 1.0 - random.NextDouble();
+            return Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Sin(2.0 * Math.PI * u2);
+        }
+
+        // 高斯随机延迟生成方法
+        private static int GetStutterDelay()
+        {
+            // 高斯分布随机延迟
+            double gaussian = NextGaussian(rand.Value);
+            int delay;
+
+            // 20%概率触发突发延迟
+            if (rand.Value.NextDouble() < 0.20)                                // 20%概率
+            {
+                delay = rand.Value.Next(101, 151);                             // 101-151ms随机延迟
+            }
+            else
+            {
+                delay = (int)(gaussian * 20 + 50);                             // 高斯分布参数:μ=50ms(中心点),σ=20ms(标准差) 
+
+                // 添加噪声
+                int noise = rand.Value.Next(-10, 11);                          // ±10ms随机干扰
+                delay += noise;                                                // 应用噪声
+
+                // 随机延迟范围
+                delay = Math.Max(10, Math.Min(delay, 100));                    // 最终限制到目标范围
+            }
+
+            return delay;
+        }
+
+        // 主循环
+        private static void Start()
+        {
+            // 无限循环，持续监控和处理按键输入
+            while (true)
+            {
+                // 检测当前鼠标左右键状态
+                bool leftPressed = (GetAsyncKeyState(VK_LBUTTON) & KEY_PRESSED) != 0;
+                bool rightPressed = (GetAsyncKeyState(VK_RBUTTON) & KEY_PRESSED) != 0;
+                bool bothPressed = leftPressed && rightPressed;
+
+                // 屏息功能实现
+                if (bothPressed && !lastLeftAndRightState)                     // 如果同时按下鼠标左右键
+                {
+                    Thread.Sleep(GetStutterDelay());                           // 使用高斯随机延迟
+                    keybd_event((byte)VK_CAPITAL, 0, KEY_DOWN_EVENT, 0);       // 模拟Caps Lock按下
+                }
+
+                // 当任意一键松开时释放Caps Lock
+                else if (!bothPressed && lastLeftAndRightState)                // 如果松开任意鼠标左右键
+                {
+                    Thread.Sleep(GetStutterDelay());                           // 使用高斯随机延迟
+                    keybd_event((byte)VK_CAPITAL, 0, KEY_UP_EVENT, 0);         // 模拟Caps Lock释放
+                }
+
+                lastLeftAndRightState = bothPressed;                           // 更新鼠标跟踪状态
+
+                // 主循环延迟(1-9ms)
+                Thread.Sleep(rand.Value.Next(1, 10));
+            }
+        }
+
+        static void Main(string[] args)
+        {
+            // 启动主循环
+            Start();
+        }
+    }
+}
